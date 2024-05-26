@@ -1,75 +1,75 @@
 import express from 'express';
-import axios from 'axios';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
-import crypto from 'crypto';
-import cors from 'cors';
+import { GeneralChat } from '@chaingpt/generalchat';
 
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
 app.use(bodyParser.json());
 
-const apiUrl = 'https://api.bitget.com/api/v1';
+const CHAIN_GPT_API_KEY = process.env.CHAIN_GPT_API_KEY;
 
-// Helper function to create request signature
-const getSignature = (params, secretKey) => {
-  const paramString = new URLSearchParams(params).toString();
-  const signature = crypto.createHmac('sha256', secretKey).update(paramString).digest('hex');
-  return signature;
-};
-
-// Helper function to create request headers
-const createHeaders = (params, apiKey, secretKey) => {
-  return {
-    'Content-Type': 'application/json',
-    'ACCESS-KEY': apiKey,
-    'SIGNATURE': getSignature(params, secretKey),
-  };
-};
-
-// Check wallet connection status endpoint
+// Mock wallet status
 let walletConnected = false;
 
-app.get('/wallet/status', (req, res) => {
-  res.json({ connected: walletConnected });
-});
-
-// Connect wallet endpoint
+// Wallet endpoints
 app.post('/wallet/connect', (req, res) => {
-  // Simulate successful wallet connection
   walletConnected = true;
-  res.json({ connected: true });
+  res.status(200).json({ connected: walletConnected });
 });
 
-// Disconnect wallet endpoint
 app.post('/wallet/disconnect', (req, res) => {
-  // Simulate wallet disconnection
   walletConnected = false;
-  res.json({ connected: false });
+  res.status(200).json({ connected: walletConnected });
 });
 
-// Generate prompt endpoint
+app.get('/wallet/status', (req, res) => {
+  res.status(200).json({ connected: walletConnected });
+});
+
+// ChainGPT endpoint
 app.post('/generate', async (req, res) => {
-  const { genre, style, tone, themes } = req.body;
-  console.log('Request received:', { genre, style, tone, themes });
+  const { tone, genre, style, theme } = req.body;
+  console.log('Request received:', { tone, genre, style, theme });
 
   try {
-    if (!walletConnected) {
-      throw new Error('Wallet not connected. Please connect your wallet first.');
+    if (!CHAIN_GPT_API_KEY) {
+      throw new Error('ChainGPT API key is not set. Please check your environment variables.');
     }
 
-    // Add your prompt generation logic here
-    const suggestion = `Your generated prompt: Genre: ${genre}, Style: ${style}, Tone: ${tone}, Themes: ${themes}`;
+    const generalchat = new GeneralChat({ apiKey: CHAIN_GPT_API_KEY });
 
-    res.json({ suggestion });
+    const prompt = `Generate a short creative writing prompt with the following preferences:
+    Tone: ${tone},
+    Genre: ${genre},
+    Style: ${style},
+    Theme: ${theme}`;
+
+    console.log('Sending prompt to ChainGPT:', prompt);
+
+    const stream = await generalchat.createChatStream({ question: prompt, chatHistory: "off" });
+
+    let suggestions = '';
+    stream.on('data', (chunk) => {
+      suggestions += chunk.toString();
+    });
+
+    stream.on('end', () => {
+      console.log('Suggestions received:', suggestions);
+      res.json({ suggestions: suggestions.split('\n').filter(s => s.trim()) });
+    });
+
+    stream.on('error', (error) => {
+      console.error('Stream error:', error.message);
+      res.status(500).json({ message: 'Failed to generate suggestions. Please try again later.' });
+    });
+
   } catch (error) {
-    console.error('Error generating suggestion:', error.message);
-    res.status(500).json({ message: error.message });
+    console.error('Error generating suggestions:', error.message);
+    res.status(500).json({ message: 'Failed to generate suggestions. Please try again later.' });
   }
 });
 
