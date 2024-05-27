@@ -1,0 +1,56 @@
+.HomeContainer {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.PromptForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.PromptForm label {
+  margin-bottom: 10px;
+}
+
+.PromptForm input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  box-sizing: border-box;
+}
+
+.Suggestions {
+  margin-top: 20px;
+}
+
+.Suggestions h2 {
+  margin-bottom: 10px;
+}
+
+.Suggestions ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.Suggestions li {
+  margin-bottom: 5px;
+}
+
