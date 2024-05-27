@@ -1,0 +1,17 @@
+/* toastStyles.css */
+.Toastify__toast-container {
+    z-index: 9999;
+  }
+  
+  .Toastify__toast--success {
+    background-color: #5cb85c;
+  }
+  
+  .Toastify__toast--error {
+    background-color: #d9534f;
+  }
+  
+  .Toastify__toast-body {
+    font-family: 'Arial', sans-serif;
+  }
+  
