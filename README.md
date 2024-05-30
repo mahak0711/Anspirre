@@ -17,3 +17,56 @@ Use the package manager [npm](https://www.npmjs.com/) to install InspireBud.
 git clone https://github.com/mahak0711/inspirebud.git
 cd inspirebud
 npm install
+```
+# Usage
+## Starting the Development Server
+
+```bash
+npm start
+```
+Open your browser and navigate to http://localhost:3000.
+
+## Connecting Your Wallet
+```bash
+import Web3Modal from 'web3modal';
+import { ethers } from 'ethers';
+
+const connectWallet = async () => {
+  try {
+    let web3modal = new Web3Modal({
+      network: "mainnet",
+      cacheProvider: true,
+      providerOptions
+    });
+    const web3modalInstance = await web3modal.connect();
+    const web3modalProvider = new ethers.providers.Web3Provider(web3modalInstance);
+    console.log(web3modalProvider);
+    setConnected(true); // Update connected state
+  } catch (error) {
+    console.log('Error connecting wallet:', error);
+  }
+};
+```
+## Generating Suggestions
+```bash 
+import axios from 'axios';
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const response = await axios.post('http://localhost:3001/generate', preferences);
+    setSuggestions(response.data.suggestions);
+  } catch (error) {
+    console.error('Error generating suggestions:', error);
+  } finally {
+    setLoading(false);
+  }
+};
+```
+# Contributing
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
+
