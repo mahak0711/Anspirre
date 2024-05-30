@@ -1,6 +1,6 @@
-# InspireBud
+# Anspire
 
-InspireBud is an AI-powered creativity assistant designed to support writers, artists, and creators in their creative endeavors. It generates personalized prompts and suggestions, analyzes previous works, helps overcome creative blocks, and continuously learns and improves based on user feedback.
+Anspire is an AI-powered creativity assistant designed to support writers, artists, and creators in their creative endeavors. It generates personalized prompts and suggestions, analyzes previous works, helps overcome creative blocks, and continuously learns and improves based on user feedback.
 
 ## Features
 
